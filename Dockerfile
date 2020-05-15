@@ -14,4 +14,4 @@ WORKDIR /root/
 COPY public.pem private.pem ./
 COPY --from=builder /go/src/github.com/hatena/apply-for-internship-2020/apply-for-internship-2020 .
 
-CMD ["./apply-for-internship-2020"]
+ENTRYPOINT ["./apply-for-internship-2020"]

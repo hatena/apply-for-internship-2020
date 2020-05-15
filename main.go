@@ -3,8 +3,10 @@ package main
 import (
 	"crypto/ecdsa"
 	"crypto/x509"
+	"encoding/json"
 	"encoding/pem"
 	"errors"
+	"flag"
 	"fmt"
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/lestrrat-go/jwx/jwa"
@@ -28,7 +30,7 @@ func askDoYouWantToApply() (bool, error) {
 func askName() (string, error) {
 	name := ""
 	prompt := &survey.Input{
-		Message:  "What is your name?",
+		Message: "What is your name?",
 	}
 	if err := survey.AskOne(prompt, &name); err != nil {
 		return name, err
@@ -91,14 +93,14 @@ func generateToken(iss string) ([]byte, error) {
 		return nil, err
 	}
 
- 	token, err := jwt.Sign(claims, jwa.ES256, privateKey)
+	token, err := jwt.Sign(claims, jwa.ES256, privateKey)
 	if err != nil {
 		return nil, err
 	}
 	return token, nil
 }
 
-func verify(token []byte) (jwt.Token, error) {
+func verifyToken(token []byte) (jwt.Token, error) {
 	publicKey, err := loadPublicKey()
 	if err != nil {
 		return nil, err
@@ -110,7 +112,21 @@ func verify(token []byte) (jwt.Token, error) {
 	return jwt.ParseBytes(token)
 }
 
-func main() {
+func verify(token string) {
+	claims, err := verifyToken([]byte(token))
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	payload, err := json.MarshalIndent(claims, "", "  ")
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	fmt.Printf("Verified:\n%s", payload)
+}
+
+func apply() {
 	wantToApply, err := askDoYouWantToApply()
 	if err != nil {
 		fmt.Println(err.Error())
@@ -134,4 +150,16 @@ func main() {
 		fmt.Println(err.Error())
 	}
 	fmt.Printf("Your token is here:\n%s", token)
+}
+
+func main() {
+	var (
+		token = flag.String("token", "", "Verify token")
+	)
+	flag.Parse()
+	if *token != "" {
+		verify(*token)
+	} else {
+		apply()
+	}
 }
