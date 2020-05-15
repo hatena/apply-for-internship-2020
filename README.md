@@ -1,2 +1,5 @@
 # apply-for-internship-2020
-I will apply for the internship 2020.
+
+```console
+$ docker run --rm -it hatena/apply-for-internship-2020:latest
+```
