@@ -78,13 +78,13 @@ func generateToken(iss string) ([]byte, error) {
 	if err := claims.Set(jwt.IssuerKey, iss); err != nil {
 		return nil, err
 	}
-	if err := claims.Set(jwt.SubjectKey, "I apply."); err != nil {
-		return nil, err
-	}
 	if err := claims.Set(jwt.AudienceKey, "Hatena Co., Ltd."); err != nil {
 		return nil, err
 	}
 	if err := claims.Set(jwt.IssuedAtKey, time.Now()); err != nil {
+		return nil, err
+	}
+	if err := claims.Set("application", true); err != nil {
 		return nil, err
 	}
 
