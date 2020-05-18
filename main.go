@@ -149,7 +149,7 @@ func apply() {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	fmt.Printf("Your token is here:\n%s", token)
+	fmt.Printf("Your token is here:\n%s\n", token)
 }
 
 func main() {
